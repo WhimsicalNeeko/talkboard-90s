@@ -1,9 +1,10 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <!-- Prevent iPad zoom + app-like feel -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
   <meta name="color-scheme" content="light" />
   <title>TalkBoard 90s</title>
 
@@ -28,12 +29,7 @@
       --aqua2:#00c0c0;
       --maroon:#800000;
       --pink:#ffb3b3;
-
       --led:#39ff14;
-      --ledbg:#001400;
-
-      --gap: 10px;
-      --radius: 0px;
     }
 
     html, body {
@@ -44,7 +40,6 @@
       font-family: "MS Sans Serif", Tahoma, Verdana, Arial, sans-serif;
       -webkit-text-size-adjust: 100%;
       overscroll-behavior: none;
-      touch-action: manipulation; /* reduces double-tap zoom */
     }
 
     *{
@@ -52,12 +47,10 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* iPad “app” feel: stop selection/callouts */
-    button, select, input, .display, .key {
-      -webkit-user-select: none;
-      user-select: none;
-      -webkit-touch-callout: none;
+    /* Reduce double-tap zoom + callouts */
+    button, select, input, textarea, .display {
       touch-action: manipulation;
+      -webkit-touch-callout: none;
     }
 
     .wrap{
@@ -70,9 +63,7 @@
     .window{
       background: var(--win);
       border: 2px solid var(--dark);
-      box-shadow:
-        inset 2px 2px 0 var(--light),
-        inset -2px -2px 0 var(--shadow);
+      box-shadow: inset 2px 2px 0 var(--light), inset -2px -2px 0 var(--shadow);
       overflow: hidden;
     }
 
@@ -88,26 +79,14 @@
       user-select:none;
     }
 
-    .title-left{
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      min-width: 0;
-    }
-
+    .title-left{ display:flex; flex-direction:column; gap:6px; min-width:0; }
     .marquee{
       width: min(760px, 74vw);
       overflow: hidden;
       white-space: nowrap;
       border: 2px solid #000;
       box-shadow: inset 2px 2px 0 rgba(255,255,255,.35), inset -2px -2px 0 rgba(0,0,0,.35);
-      background: repeating-linear-gradient(
-        90deg,
-        #001400 0px,
-        #001400 10px,
-        #001900 10px,
-        #001900 20px
-      );
+      background: repeating-linear-gradient(90deg,#001400 0px,#001400 10px,#001900 10px,#001900 20px);
       color: var(--led);
       padding: 6px 10px;
       font-family: "Courier New", Courier, monospace;
@@ -117,14 +96,11 @@
       line-height: 1.1;
     }
     .marquee span{
-      display: inline-block;
-      padding-left: 100%;
+      display:inline-block;
+      padding-left:100%;
       animation: scroll 11s linear infinite;
     }
-    @keyframes scroll{
-      from { transform: translateX(0); }
-      to   { transform: translateX(-100%); }
-    }
+    @keyframes scroll{ from{transform:translateX(0)} to{transform:translateX(-100%)} }
 
     .titlebar .right{ display:flex; gap:6px; }
     .tb-btn{
@@ -132,7 +108,6 @@
       background: var(--win2);
       border: 2px solid var(--dark);
       box-shadow: inset 1px 1px 0 var(--light), inset -1px -1px 0 var(--shadow);
-      flex: 0 0 auto;
     }
 
     .content{
@@ -192,15 +167,6 @@
     }
     .toolbar button{ flex: 1; min-width: 120px; }
 
-    .kbd{
-      display:grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-    }
-    @media (min-width: 900px){
-      .kbd{ grid-template-columns: repeat(9, 1fr); }
-    }
-
     .phrases{
       display:grid;
       grid-template-columns: repeat(2, 1fr);
@@ -217,11 +183,13 @@
       color: var(--text);
       border: 2px solid var(--dark);
       box-shadow: inset 2px 2px 0 var(--light), inset -2px -2px 0 var(--shadow);
-      border-radius: var(--radius);
+      border-radius: 0;
       padding: 12px 10px;
       font-family: inherit;
       font-weight: 900;
       cursor: pointer;
+      user-select:none;
+      -webkit-user-select:none;
     }
     button:active{
       box-shadow: inset -2px -2px 0 var(--light), inset 2px 2px 0 var(--shadow);
@@ -229,9 +197,6 @@
     }
 
     .big{ padding: 14px 12px; font-size: 16px; }
-    .key{ padding: 14px 0; font-size: 16px; }
-    .wide{ grid-column: span 2; }
-    .wider{ grid-column: span 3; }
 
     .primary{
       background: linear-gradient(180deg, var(--aqua), var(--aqua2));
@@ -249,11 +214,31 @@
       border-width: 3px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      box-shadow:
-        inset 3px 3px 0 var(--light),
-        inset -3px -3px 0 var(--shadow),
-        0 0 0 2px #000;
+      box-shadow: inset 3px 3px 0 var(--light), inset -3px -3px 0 var(--shadow), 0 0 0 2px #000;
     }
+
+    label{ font-size: 12px; font-weight: 900; }
+
+    select, textarea{
+      width: 100%;
+      padding: 10px 10px;
+      font-family: inherit;
+      font-weight: 900;
+      border-radius: 0;
+      border: 2px solid var(--darker);
+      box-shadow: inset 2px 2px 0 var(--shadow), inset -2px -2px 0 var(--light);
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    textarea{
+      min-height: 84px;
+      resize: vertical;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    input[type="range"]{ width: 100%; }
 
     .fieldrow{
       display:grid;
@@ -261,25 +246,6 @@
       gap: 8px;
       margin-top: 8px;
     }
-
-    label{
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    select, input[type="text"], textarea{
-      width: 100%;
-      padding: 10px 10px;
-      font-family: inherit;
-      font-weight: 900;
-      border-radius: var(--radius);
-      border: 2px solid var(--darker);
-      box-shadow: inset 2px 2px 0 var(--shadow), inset -2px -2px 0 var(--light);
-      background: #ffffff;
-      color: var(--text);
-    }
-
-    input[type="range"]{ width: 100%; }
 
     .hint{
       font-size: 12px;
@@ -298,28 +264,6 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
-
-    .kbd .danger{ border-color: var(--maroon); }
-
-    /* Hidden-but-focused input for hardware/iPad keyboard */
-    #kbdCapture{
-      position: fixed;
-      left: -9999px;
-      top: 0;
-      width: 10px;
-      height: 10px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .focusRow{
-      display:flex;
-      gap: 8px;
-      margin-top: 10px;
-      align-items:center;
-      flex-wrap: wrap;
-    }
-    .focusRow button{ flex: 1; min-width: 160px; }
   </style>
 </head>
 
@@ -330,13 +274,11 @@
         <div class="title-left">
           <div>TalkBoard 90s</div>
           <div class="marquee" aria-hidden="true">
-            <span> TYPE WITH YOUR KEYBOARD • TAP BUTTONS • PRESS SPEAK • </span>
+            <span> TYPE WITH YOUR iPAD KEYBOARD • PRESS SPEAK • RETRO MODE • </span>
           </div>
         </div>
         <div class="right" aria-hidden="true">
-          <div class="tb-btn"></div>
-          <div class="tb-btn"></div>
-          <div class="tb-btn"></div>
+          <div class="tb-btn"></div><div class="tb-btn"></div><div class="tb-btn"></div>
         </div>
       </div>
 
@@ -344,8 +286,7 @@
         <!-- LEFT -->
         <section class="panel">
           <h3>Message</h3>
-
-          <div class="display" id="displayBox">
+          <div class="display">
             <div id="output" class="text" aria-live="polite"> </div>
           </div>
 
@@ -354,36 +295,28 @@
             <div class="tiny">Autosave: On</div>
           </div>
 
+          <div class="fieldrow">
+            <label for="editor">Type here (iPad / Magic Keyboard works)</label>
+            <textarea id="editor" placeholder="Type your message here..."></textarea>
+          </div>
+
           <div class="toolbar">
+            <!-- IMPORTANT: Speak uses CLICK (most reliable for iOS speech) -->
             <button id="speakBtn" class="primary big">Speak</button>
             <button id="pauseBtn" class="ghost big">Pause</button>
             <button id="stopBtn"  class="ghost big">Stop</button>
-            <button id="spaceBtn" class="ghost big">Space</button>
-            <button id="backBtn"  class="ghost big">Back</button>
             <button id="clearBtn" class="danger big">Clear</button>
-          </div>
-
-          <div class="focusRow">
-            <button id="focusBtn" class="ghost">Focus typing (keyboard)</button>
-            <button id="toggleKbdBtn" class="ghost">Hide on-screen keys</button>
           </div>
 
           <div style="height:12px"></div>
 
           <div class="panel" style="background: var(--win) !important;">
-            <h3>Quick Phrases (tap to insert)</h3>
+            <h3>Quick Phrases</h3>
             <div id="quickPhrases" class="phrases"></div>
           </div>
 
-          <div style="height:12px"></div>
-
-          <div id="kbdPanel" class="panel" style="background: var(--win) !important;">
-            <h3>On-screen Keyboard (optional)</h3>
-            <div id="keys" class="kbd"></div>
-          </div>
-
           <div class="hint">
-            Tip: Use your iPad/Magic Keyboard normally. Tap “Focus typing” if keys stop going into the message.
+            If speech doesn’t start: open this site in <b>Safari</b> (not inside GitHub), then tap Speak again.
           </div>
         </section>
 
@@ -392,7 +325,7 @@
           <h3>Voice</h3>
 
           <div class="fieldrow">
-            <label for="voiceSel">Voice (uses iPad voices)</label>
+            <label for="voiceSel">Voice</label>
             <select id="voiceSel"></select>
           </div>
 
@@ -407,89 +340,39 @@
           </div>
 
           <div class="hint">
-            iPad: Open in Safari → Share → <b>Add to Home Screen</b> (full-screen app feel).<br><br>
-            This site uses iOS built-in voices only.
-          </div>
-
-          <div style="height:12px"></div>
-
-          <div class="panel" style="background: var(--win) !important;">
-            <h3>Saved Phrases</h3>
-
-            <div class="fieldrow">
-              <label for="phraseInput">Add a phrase</label>
-              <input id="phraseInput" type="text" placeholder="e.g. Please help me" />
-              <div class="split">
-                <button id="addPhraseBtn" class="primary">Add</button>
-                <button id="saveCurrentBtn" class="ghost">Save current message</button>
-              </div>
-            </div>
-
-            <div style="height:10px"></div>
-            <div id="savedPhrases" class="phrases"></div>
-
-            <div style="height:10px"></div>
-            <div class="split">
-              <button id="exportBtn" class="ghost">Export</button>
-              <button id="resetBtn" class="danger">Reset</button>
-            </div>
-
-            <div class="hint" style="margin-top:10px;">
-              Remove a saved phrase: long-press it.
-            </div>
+            iPad: Safari → Share → <b>Add to Home Screen</b> for app-like mode.
           </div>
         </aside>
       </div>
     </div>
   </div>
 
-  <!-- Hidden input that captures hardware/on-screen typing reliably -->
-  <input id="kbdCapture" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-
 <script>
 (() => {
-  const output = document.getElementById('output');
-  const statusEl = document.getElementById('status');
+  const output   = document.getElementById("output");
+  const statusEl = document.getElementById("status");
+  const editor   = document.getElementById("editor");
 
-  const speakBtn = document.getElementById('speakBtn');
-  const pauseBtn = document.getElementById('pauseBtn');
-  const stopBtn  = document.getElementById('stopBtn');
+  const speakBtn = document.getElementById("speakBtn");
+  const pauseBtn = document.getElementById("pauseBtn");
+  const stopBtn  = document.getElementById("stopBtn");
+  const clearBtn = document.getElementById("clearBtn");
 
-  const spaceBtn = document.getElementById('spaceBtn');
-  const backBtn  = document.getElementById('backBtn');
-  const clearBtn = document.getElementById('clearBtn');
+  const quickEl  = document.getElementById("quickPhrases");
 
-  const keysEl = document.getElementById('keys');
-  const quickEl = document.getElementById('quickPhrases');
-  const savedEl = document.getElementById('savedPhrases');
-
-  const voiceSel = document.getElementById('voiceSel');
-  const rateEl = document.getElementById('rate');
-  const pitchEl = document.getElementById('pitch');
-
-  const phraseInput = document.getElementById('phraseInput');
-  const addPhraseBtn = document.getElementById('addPhraseBtn');
-  const saveCurrentBtn = document.getElementById('saveCurrentBtn');
-  const exportBtn = document.getElementById('exportBtn');
-  const resetBtn = document.getElementById('resetBtn');
-
-  const kbdCapture = document.getElementById('kbdCapture');
-  const focusBtn = document.getElementById('focusBtn');
-  const toggleKbdBtn = document.getElementById('toggleKbdBtn');
-  const kbdPanel = document.getElementById('kbdPanel');
-  const displayBox = document.getElementById('displayBox');
+  const voiceSel = document.getElementById("voiceSel");
+  const rateEl   = document.getElementById("rate");
+  const pitchEl  = document.getElementById("pitch");
 
   // ---------- Status ----------
   function status(t){ statusEl.textContent = t; }
 
-  // ---------- iOS-safe beep (single AudioContext) ----------
+  // ---------- iOS-safe Beep (single AudioContext) ----------
   let audioCtx = null;
   function initAudio(){
-    if (!audioCtx){
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      audioCtx = new AudioCtx();
-    }
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!audioCtx) audioCtx = new AudioCtx();
     if (audioCtx.state === "suspended") audioCtx.resume();
   }
   function beep(){
@@ -498,133 +381,49 @@
     const g = audioCtx.createGain();
     o.type = "square";
     o.frequency.value = 880;
-    g.gain.value = 0.045;
+    g.gain.value = 0.04;
     o.connect(g); g.connect(audioCtx.destination);
     const t = audioCtx.currentTime;
     o.start(t);
-    o.stop(t + 0.08);
+    o.stop(t + 0.07);
   }
-  document.addEventListener("pointerdown", initAudio, { once: true });
+  document.addEventListener("click", initAudio, { once: true });
 
-  // ---------- Text state ----------
-  let text = "";
-
+  // ---------- State + Autosave ----------
   function setText(t){
-    text = t;
-    output.textContent = text || " ";
-    localStorage.setItem("talkboard90_text", text);
+    editor.value = t;
+    output.textContent = t || " ";
+    localStorage.setItem("talkboard90_text", t);
+  }
+  function getText(){
+    return editor.value || "";
   }
 
-  function insert(s){ setText(text + s); }
-  function insertPhrase(p){
-    if (!text) setText(p);
-    else if (text.endsWith(" ") || text.endsWith("\n")) setText(text + p);
-    else setText(text + " " + p);
-  }
-
-  function space(){
-    if (text.length === 0) return;
-    if (!text.endsWith(" ")) setText(text + " ");
-  }
-
-  function backspace(){ setText(text.slice(0, -1)); }
-  function clearAll(){ setText(""); }
-
-  // ---------- “Focus typing” ----------
-  function focusTyping(){
-    // Keep the hidden input focused so hardware keyboard works
-    kbdCapture.focus({preventScroll:true});
-    status("Typing: ON");
-  }
-
-  // Focus when tapping the message area
-  displayBox.addEventListener("pointerdown", () => {
-    initAudio();
-    focusTyping();
-    beep();
-  });
-
-  focusBtn.addEventListener("pointerdown", (e) => {
-    e.preventDefault();
-    initAudio();
-    focusTyping();
-    beep();
-  });
-
-  // Keep focus if user taps around (optional but helps iPad)
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) setTimeout(focusTyping, 50);
-  });
-
-  // ---------- Keyboard capture (hardware + iPad keyboard) ----------
-  // We capture keydown for special keys + use input event for normal typing
-  kbdCapture.addEventListener("keydown", (e) => {
-    // Allow Cmd shortcuts to pass through
-    if (e.metaKey || e.ctrlKey) return;
-
-    if (e.key === "Backspace"){
-      e.preventDefault();
-      backspace();
-      beep();
-      return;
-    }
-
-    if (e.key === "Enter"){
-      e.preventDefault();
-      insert("\n");
-      beep();
-      return;
-    }
-
-    if (e.key === " "){
-      e.preventDefault();
-      insert(" ");
-      beep();
-      return;
-    }
-  });
-
-  // For normal characters (letters, punctuation, etc.)
-  kbdCapture.addEventListener("input", () => {
-    const v = kbdCapture.value;
-    if (v){
-      insert(v);
-      kbdCapture.value = "";
-      // no beep on every letter by default (less “buggy/noisy”)
-    }
+  // Keep display synced with textarea (hardware keyboard friendly)
+  editor.addEventListener("input", () => {
+    output.textContent = editor.value || " ";
+    localStorage.setItem("talkboard90_text", editor.value || "");
   });
 
   // ---------- Quick phrases ----------
   const quick = [
-    "Hello",
-    "Yes",
-    "No",
-    "Thank you",
-    "Please",
-    "I need help",
-    "I’m thirsty",
-    "I’m hungry",
-    "I’m in pain",
-    "I need the toilet",
-    "Stop please",
-    "Goodbye"
+    "Hello", "Yes", "No", "Thank you", "Please",
+    "I need help", "I’m thirsty", "I’m hungry", "I’m in pain",
+    "I need the toilet", "Stop please", "Goodbye"
   ];
 
-  function makeBtn(label, onPress, cls=""){
+  function insertPhrase(p){
+    const cur = getText();
+    const next = cur && !cur.endsWith(" ") && !cur.endsWith("\n") ? (cur + " " + p) : (cur + p);
+    setText(next);
+    editor.focus();
+  }
+
+  function makeBtn(label, fn, cls="ghost"){
     const b = document.createElement("button");
+    b.className = cls;
     b.textContent = label;
-    if (cls) b.className = cls;
-
-    // Pointer events only (less buggy on iPad than mixing touch/mouse)
-    b.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
-      initAudio();
-      beep();
-      onPress();
-      // keep typing focus after pressing buttons
-      focusTyping();
-    });
-
+    b.addEventListener("click", () => { initAudio(); beep(); fn(); });
     return b;
   }
 
@@ -633,143 +432,9 @@
     quick.forEach(p => quickEl.appendChild(makeBtn(p, () => insertPhrase(p), "ghost")));
   }
 
-  // ---------- Saved phrases ----------
-  function loadSaved(){
-    try { return JSON.parse(localStorage.getItem("talkboard90_saved") || "[]"); }
-    catch { return []; }
-  }
-
-  function saveSaved(arr){
-    localStorage.setItem("talkboard90_saved", JSON.stringify(arr));
-  }
-
-  function renderSaved(){
-    savedEl.innerHTML = "";
-    const arr = loadSaved();
-
-    if (arr.length === 0){
-      const d = document.createElement("div");
-      d.className = "tiny";
-      d.textContent = "No saved phrases yet.";
-      savedEl.appendChild(d);
-      return;
-    }
-
-    arr.forEach((p, idx) => {
-      const b = makeBtn(p, () => insertPhrase(p), "ghost");
-
-      // Long-press to remove
-      let timer = null;
-      const start = (e) => {
-        e.preventDefault();
-        timer = setTimeout(() => removeSavedAt(idx), 650);
-      };
-      const end = () => {
-        if (timer) clearTimeout(timer);
-        timer = null;
-      };
-
-      b.addEventListener("pointerdown", start);
-      b.addEventListener("pointerup", end);
-      b.addEventListener("pointercancel", end);
-      b.addEventListener("pointerleave", end);
-
-      savedEl.appendChild(b);
-    });
-  }
-
-  function removeSavedAt(idx){
-    const cur = loadSaved();
-    const removed = cur[idx];
-    cur.splice(idx, 1);
-    saveSaved(cur);
-    renderSaved();
-    status(removed ? "Removed phrase" : "Removed");
-    initAudio(); beep();
-    focusTyping();
-  }
-
-  function addPhrase(){
-    const p = (phraseInput.value || "").trim();
-    if (!p) return;
-    const arr = loadSaved();
-    if (!arr.includes(p)) arr.unshift(p);
-    saveSaved(arr.slice(0, 30));
-    phraseInput.value = "";
-    renderSaved();
-    status("Saved phrase added");
-    focusTyping();
-  }
-
-  function saveCurrent(){
-    const p = (text || "").trim();
-    if (!p) return;
-    const arr = loadSaved();
-    if (!arr.includes(p)) arr.unshift(p);
-    saveSaved(arr.slice(0, 30));
-    renderSaved();
-    status("Saved current message");
-    focusTyping();
-  }
-
-  function exportData(){
-    const data = {
-      text,
-      saved: loadSaved(),
-      rate: rateEl.value,
-      pitch: pitchEl.value
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "talkboard90-export.json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-    status("Exported");
-    initAudio(); beep();
-    focusTyping();
-  }
-
-  function resetAll(){
-    if (!confirm("Reset message + saved phrases?")) return;
-    localStorage.removeItem("talkboard90_text");
-    localStorage.removeItem("talkboard90_saved");
-    setText("");
-    renderSaved();
-    status("Reset complete");
-    initAudio(); beep();
-    focusTyping();
-  }
-
-  // ---------- On-screen keyboard ----------
-  function renderKeys(){
-    keysEl.innerHTML = "";
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-    const nums = "1234567890".split("");
-    const punct = ["'", ",", ".", "?", "!", ":", ";", "-", "(", ")"];
-    const all = [...letters, ...nums, ...punct];
-
-    all.forEach(k => keysEl.appendChild(makeBtn(k, () => insert(k), "key")));
-
-    keysEl.appendChild(makeBtn("⌫", backspace, "key"));
-    keysEl.appendChild(makeBtn("␣", () => insert(" "), "key"));
-    keysEl.appendChild(makeBtn("ENTER", () => insert("\n"), "key wide"));
-    keysEl.appendChild(makeBtn("CLEAR", clearAll, "key danger wide"));
-  }
-
-  // Toggle the on-screen keyboard panel
-  let kbdVisible = true;
-  toggleKbdBtn.addEventListener("pointerdown", (e) => {
-    e.preventDefault();
-    initAudio(); beep();
-    kbdVisible = !kbdVisible;
-    kbdPanel.style.display = kbdVisible ? "block" : "none";
-    toggleKbdBtn.textContent = kbdVisible ? "Hide on-screen keys" : "Show on-screen keys";
-    focusTyping();
-  });
-
-  // ---------- Speech (Web Speech API) ----------
+  // ---------- Speech (iPad reliable) ----------
   let voices = [];
+
   function loadVoices(){
     voices = ("speechSynthesis" in window) ? speechSynthesis.getVoices() : [];
     voiceSel.innerHTML = "";
@@ -800,23 +465,29 @@
       return;
     }
 
-    const msg = (text || "").trim();
+    const msg = getText().trim();
     if (!msg){ status("Nothing to speak"); return; }
 
+    // iOS Safari reliability steps
+    speechSynthesis.resume();
     speechSynthesis.cancel();
 
+    // Ensure voices loaded (iOS sometimes empty at first)
+    if (!voices || voices.length === 0) loadVoices();
+
     const u = new SpeechSynthesisUtterance(msg);
-    u.rate = Number(rateEl.value);
+    u.rate  = Number(rateEl.value);
     u.pitch = Number(pitchEl.value);
 
     const idx = parseInt(voiceSel.value, 10);
-    if (!isNaN(idx) && voices[idx]) u.voice = voices[idx];
+    if (!isNaN(idx) && voices && voices[idx]) u.voice = voices[idx];
 
     u.onstart = () => status("Speaking…");
-    u.onend = () => status("Ready");
-    u.onerror = () => status("Speech error");
+    u.onend   = () => status("Ready");
+    u.onerror = () => status("Speech error (try reload / Safari)");
 
-    speechSynthesis.speak(u);
+    // Tiny delay after cancel helps iOS
+    setTimeout(() => speechSynthesis.speak(u), 80);
   }
 
   function pauseResume(){
@@ -840,46 +511,29 @@
     status("Stopped");
   }
 
-  // ---------- Wire up buttons (pointer only) ----------
-  speakBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); initAudio(); beep(); speakNow(); focusTyping(); });
-  pauseBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); initAudio(); beep(); pauseResume(); focusTyping(); });
-  stopBtn.addEventListener("pointerdown",  (e) => { e.preventDefault(); initAudio(); beep(); stop(); focusTyping(); });
+  // IMPORTANT: Speak uses CLICK, no preventDefault
+  speakBtn.addEventListener("click", () => { initAudio(); beep(); speakNow(); });
+  pauseBtn.addEventListener("click", () => { initAudio(); beep(); pauseResume(); });
+  stopBtn.addEventListener("click",  () => { initAudio(); beep(); stop(); });
 
-  spaceBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); initAudio(); beep(); space(); focusTyping(); });
-  backBtn.addEventListener("pointerdown",  (e) => { e.preventDefault(); initAudio(); beep(); backspace(); focusTyping(); });
-  clearBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); initAudio(); beep(); clearAll(); focusTyping(); });
-
-  addPhraseBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); initAudio(); beep(); addPhrase(); });
-  saveCurrentBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); initAudio(); beep(); saveCurrent(); });
-
-  phraseInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter"){
-      e.preventDefault();
-      addPhrase();
-    }
+  clearBtn.addEventListener("click", () => {
+    initAudio(); beep();
+    setText("");
+    status("Cleared");
+    stop();
+    editor.focus();
   });
-
-  exportBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); exportData(); });
-  resetBtn.addEventListener("pointerdown",  (e) => { e.preventDefault(); resetAll(); });
 
   // ---------- Init ----------
   setText(localStorage.getItem("talkboard90_text") || "");
   renderQuick();
-  renderKeys();
-  renderSaved();
-
   loadVoices();
-  if ("speechSynthesis" in window){
-    speechSynthesis.onvoiceschanged = loadVoices;
-  }
+  if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = loadVoices;
 
-  // Auto-focus typing shortly after load (works great with hardware keyboard)
-  setTimeout(() => {
-    focusTyping();
-    status("Ready");
-  }, 120);
+  // Start focused for typing
+  setTimeout(() => editor.focus(), 120);
+  status("Ready");
 })();
 </script>
-
 </body>
 </html>
