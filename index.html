@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,16 +7,740 @@
   <meta name="color-scheme" content="light" />
   <title>TalkBoard 90s</title>
 
+  <!-- iOS Home Screen (PWA-ish) -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#008080" />
 
   <style>
-    /* --- styles trimmed for brevity in tool, full version below --- */
+    :root{
+      --teal:#008080;
+      --win:#c0c0c0;
+      --win2:#dcdcdc;
+      --dark:#404040;
+      --darker:#202020;
+      --shadow:#808080;
+      --light:#ffffff;
+      --text:#000000;
+      --navy:#000080;
+      --navy2:#0000d0;
+      --aqua:#00ffff;
+      --aqua2:#00c0c0;
+      --maroon:#800000;
+      --pink:#ffb3b3;
+      --yellow:#ffff80;
+
+      --led:#39ff14;
+      --ledbg:#001400;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--teal) !important;
+      color: var(--text);
+      font-family: "MS Sans Serif", Tahoma, Verdana, Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+      filter: none !important;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 12px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .window{
+      background: var(--win) !important;
+      border: 2px solid var(--dark);
+      box-shadow: inset 2px 2px 0 var(--light), inset -2px -2px 0 var(--shadow);
+      overflow: hidden;
+    }
+
+    .titlebar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      background: linear-gradient(90deg, var(--navy) 0%, #0000a8 55%, var(--navy2) 100%) !important;
+      color: #fff;
+      font-weight: 900;
+      user-select:none;
+    }
+
+    .title-left{
+      display:flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .marquee{
+      width: min(720px, 72vw);
+      overflow: hidden;
+      white-space: nowrap;
+      border: 2px solid #000;
+      box-shadow: inset 2px 2px 0 rgba(255,255,255,.35), inset -2px -2px 0 rgba(0,0,0,.35);
+      background: repeating-linear-gradient(
+        90deg,
+        #001400 0px,
+        #001400 8px,
+        #001900 8px,
+        #001900 16px
+      );
+      color: var(--led);
+      padding: 6px 8px;
+      font-family: "Courier New", Courier, monospace;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(57,255,20,.35);
+    }
+    .marquee span{
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll 10s linear infinite;
+    }
+    @keyframes scroll{
+      from { transform: translateX(0); }
+      to   { transform: translateX(-100%); }
+    }
+
+    .titlebar .right{ display:flex; gap:6px; flex: 0 0 auto; }
+    .tb-btn{
+      width: 18px; height: 18px;
+      background: var(--win2) !important;
+      border: 2px solid var(--dark);
+      box-shadow: inset 1px 1px 0 var(--light), inset -1px -1px 0 var(--shadow);
+    }
+
+    .content{
+      padding: 12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 900px){
+      .content{ grid-template-columns: 1.35fr .65fr; }
+    }
+
+    .panel{
+      background: var(--win2) !important;
+      border: 2px solid var(--dark);
+      box-shadow: inset 2px 2px 0 var(--light), inset -2px -2px 0 var(--shadow);
+      padding: 10px;
+    }
+
+    .panel h3{
+      margin:0 0 8px 0;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .display{
+      background: #ffffff !important;
+      border: 2px solid var(--darker);
+      box-shadow: inset 2px 2px 0 var(--shadow), inset -2px -2px 0 var(--light);
+      padding: 10px;
+      min-height: 110px;
+    }
+
+    .text{
+      font-size: 28px;
+      line-height: 1.25;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .statusbar{
+      margin-top: 8px;
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      font-weight: 800;
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .toolbar button{ flex: 1; min-width: 120px; }
+
+    .kbd{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    @media (min-width: 900px){
+      .kbd{ grid-template-columns: repeat(9, 1fr); }
+    }
+
+    .phrases{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    @media (min-width: 900px){
+      .phrases{ grid-template-columns: repeat(3, 1fr); }
+    }
+
+    button{
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--win) !important;
+      color: var(--text) !important;
+      border: 2px solid var(--dark);
+      box-shadow: inset 2px 2px 0 var(--light), inset -2px -2px 0 var(--shadow);
+      border-radius: 0;
+      padding: 12px 10px;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      user-select:none;
+    }
+    button:active{
+      box-shadow: inset -2px -2px 0 var(--light), inset 2px 2px 0 var(--shadow);
+      transform: translateY(1px);
+    }
+
+    .big{ padding: 14px 12px; font-size: 16px; }
+    .key{ padding: 14px 0; font-size: 16px; }
+    .wide{ grid-column: span 2; }
+    .wider{ grid-column: span 3; }
+
+    .primary{
+      background: linear-gradient(180deg, var(--aqua), var(--aqua2)) !important;
+      border-color: #005f5f;
+    }
+    .danger{
+      background: linear-gradient(180deg, var(--pink), #ff8080) !important;
+      border-color: var(--maroon);
+    }
+    .ghost{
+      background: var(--win2) !important;
+    }
+
+    /* Make SPEAK button extra 90s + chunky */
+    #speakBtn{
+      font-size: 18px;
+      padding: 18px 14px;
+      border-width: 3px;
+      box-shadow:
+        inset 3px 3px 0 var(--light),
+        inset -3px -3px 0 var(--shadow),
+        0 0 0 2px #000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .fieldrow{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    label{
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    select, input[type="text"]{
+      width: 100%;
+      padding: 10px 10px;
+      font-family: inherit;
+      font-weight: 900;
+      border-radius: 0;
+      border: 2px solid var(--darker);
+      box-shadow: inset 2px 2px 0 var(--shadow), inset -2px -2px 0 var(--light);
+      background: #ffffff !important;
+      color: var(--text) !important;
+    }
+
+    input[type="range"]{ width: 100%; }
+
+    .hint{
+      font-size: 12px;
+      margin-top: 8px;
+      padding: 8px;
+      background: #ffffff !important;
+      border: 2px solid var(--darker);
+      box-shadow: inset 2px 2px 0 var(--shadow), inset -2px -2px 0 var(--light);
+      font-weight: 800;
+    }
+
+    .tiny{ font-size: 12px; font-weight: 900; }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .row3{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .kbd .danger{ border-color: var(--maroon); }
+
+    .footerline{
+      margin-top: 10px;
+      font-size: 11px;
+      opacity: .9;
+    }
   </style>
 </head>
+
 <body>
-  <h1>TalkBoard 90s</h1>
-  <p>If you see this, the file downloaded correctly.</p>
+  <div class="wrap">
+    <div class="window" role="application" aria-label="TalkBoard 90s">
+      <div class="titlebar">
+        <div class="title-left">
+          <div>TalkBoard 90s</div>
+          <div class="marquee" aria-hidden="true">
+            <span> TAP TO TYPE • PRESS SPEAK • RETRO MODE ENGAGED • </span>
+          </div>
+        </div>
+        <div class="right" aria-hidden="true">
+          <div class="tb-btn"></div>
+          <div class="tb-btn"></div>
+          <div class="tb-btn"></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- LEFT -->
+        <section class="panel">
+          <h3>Message</h3>
+          <div class="display">
+            <div id="output" class="text" aria-live="polite"> </div>
+          </div>
+
+          <div class="statusbar">
+            <div class="tiny">Status: <span id="status">Ready</span></div>
+            <div class="tiny">Autosave: On</div>
+          </div>
+
+          <div class="toolbar">
+            <button id="speakBtn" class="primary big">Speak</button>
+            <button id="pauseBtn" class="ghost big">Pause</button>
+            <button id="stopBtn"  class="ghost big">Stop</button>
+            <button id="spaceBtn" class="ghost big">Space</button>
+            <button id="backBtn"  class="ghost big">Back</button>
+            <button id="clearBtn" class="danger big">Clear</button>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="panel" style="background: var(--win) !important;">
+            <h3>Quick Phrases (tap to insert)</h3>
+            <div id="quickPhrases" class="phrases"></div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="panel" style="background: var(--win) !important;">
+            <h3>Keyboard</h3>
+            <div id="keys" class="kbd"></div>
+          </div>
+
+          <div class="footerline tiny">
+            Tip: Long-press saved phrases to delete. Works great as “Add to Home Screen” on iPad.
+          </div>
+        </section>
+
+        <!-- RIGHT -->
+        <aside class="panel">
+          <h3>Voice</h3>
+
+          <div class="fieldrow">
+            <label for="voiceSel">Voice (uses iPad voices)</label>
+            <select id="voiceSel"></select>
+          </div>
+
+          <div class="fieldrow">
+            <label for="rate">Rate</label>
+            <input id="rate" type="range" min="0.6" max="1.4" step="0.05" value="1.0" />
+          </div>
+
+          <div class="fieldrow">
+            <label for="pitch">Pitch</label>
+            <input id="pitch" type="range" min="0.6" max="1.4" step="0.05" value="1.0" />
+          </div>
+
+          <div class="hint">
+            iPad: Open in Safari → Share → <b>Add to Home Screen</b> (full-screen app feel).<br><br>
+            This site uses iOS built-in voices (celebrity voices can’t be added).
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="panel" style="background: var(--win) !important;">
+            <h3>Saved Phrases</h3>
+
+            <div class="fieldrow">
+              <label for="phraseInput">Add a phrase</label>
+              <input id="phraseInput" type="text" placeholder="e.g. Please help me" />
+              <div class="split">
+                <button id="addPhraseBtn" class="primary">Add</button>
+                <button id="saveCurrentBtn" class="ghost">Save current message</button>
+              </div>
+            </div>
+
+            <div style="height:10px"></div>
+            <div id="savedPhrases" class="phrases"></div>
+
+            <div style="height:10px"></div>
+            <div class="split">
+              <button id="exportBtn" class="ghost">Export</button>
+              <button id="resetBtn" class="danger">Reset</button>
+            </div>
+
+            <div class="hint" style="margin-top:10px;">
+              Remove a saved phrase: long-press it (or right-click on desktop).
+            </div>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const output = document.getElementById('output');
+  const statusEl = document.getElementById('status');
+
+  const speakBtn = document.getElementById('speakBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const stopBtn  = document.getElementById('stopBtn');
+
+  const spaceBtn = document.getElementById('spaceBtn');
+  const backBtn  = document.getElementById('backBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
+  const keysEl = document.getElementById('keys');
+  const quickEl = document.getElementById('quickPhrases');
+  const savedEl = document.getElementById('savedPhrases');
+
+  const voiceSel = document.getElementById('voiceSel');
+  const rateEl = document.getElementById('rate');
+  const pitchEl = document.getElementById('pitch');
+
+  const phraseInput = document.getElementById('phraseInput');
+  const addPhraseBtn = document.getElementById('addPhraseBtn');
+  const saveCurrentBtn = document.getElementById('saveCurrentBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  // ---------- Tiny retro beep ----------
+  function beep(){
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "square";
+      o.frequency.value = 880;
+      g.gain.value = 0.05;
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      setTimeout(() => { o.stop(); ctx.close(); }, 80);
+    }catch{}
+  }
+
+  // ---------- Text state ----------
+  let text = "";
+
+  function status(t){ statusEl.textContent = t; }
+
+  function setText(t){
+    text = t;
+    output.textContent = text || " ";
+    localStorage.setItem("talkboard90_text", text);
+  }
+
+  function insert(s){ setText(text + s); }
+  function insertPhrase(p){
+    if (!text) setText(p);
+    else if (text.endsWith(" ") || text.endsWith("\n")) setText(text + p);
+    else setText(text + " " + p);
+  }
+
+  function space(){
+    if (text.length === 0) return;
+    if (!text.endsWith(" ")) setText(text + " ");
+  }
+
+  function backspace(){ setText(text.slice(0, -1)); }
+  function clearAll(){ setText(""); }
+
+  // ---------- Quick phrases ----------
+  const quick = [
+    "Hello",
+    "Yes",
+    "No",
+    "Thank you",
+    "Please",
+    "I need help",
+    "I’m thirsty",
+    "I’m hungry",
+    "I’m in pain",
+    "I need the toilet",
+    "Stop please",
+    "Goodbye"
+  ];
+
+  function makeBtn(label, onClick, cls=""){
+    const b = document.createElement("button");
+    b.textContent = label;
+    if (cls) b.className = cls;
+    b.addEventListener("click", () => { beep(); onClick(); });
+    return b;
+  }
+
+  function renderQuick(){
+    quickEl.innerHTML = "";
+    quick.forEach(p => quickEl.appendChild(makeBtn(p, () => insertPhrase(p), "ghost")));
+  }
+
+  // ---------- Saved phrases ----------
+  function loadSaved(){
+    try { return JSON.parse(localStorage.getItem("talkboard90_saved") || "[]"); }
+    catch { return []; }
+  }
+
+  function saveSaved(arr){
+    localStorage.setItem("talkboard90_saved", JSON.stringify(arr));
+  }
+
+  function renderSaved(){
+    savedEl.innerHTML = "";
+    const arr = loadSaved();
+
+    if (arr.length === 0){
+      const d = document.createElement("div");
+      d.className = "tiny";
+      d.textContent = "No saved phrases yet.";
+      savedEl.appendChild(d);
+      return;
+    }
+
+    arr.forEach((p, idx) => {
+      const b = makeBtn(p, () => insertPhrase(p), "ghost");
+
+      b.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        removeSavedAt(idx);
+      });
+
+      let pressTimer = null;
+      const startPress = (e) => {
+        e.preventDefault();
+        pressTimer = setTimeout(() => removeSavedAt(idx), 650);
+      };
+      const endPress = () => {
+        if (pressTimer) clearTimeout(pressTimer);
+        pressTimer = null;
+      };
+
+      b.addEventListener("touchstart", startPress, {passive:false});
+      b.addEventListener("touchend", endPress);
+      b.addEventListener("touchcancel", endPress);
+      b.addEventListener("mousedown", startPress);
+      b.addEventListener("mouseup", endPress);
+      b.addEventListener("mouseleave", endPress);
+
+      savedEl.appendChild(b);
+    });
+  }
+
+  function removeSavedAt(idx){
+    const cur = loadSaved();
+    const removed = cur[idx];
+    cur.splice(idx, 1);
+    saveSaved(cur);
+    renderSaved();
+    status(removed ? "Removed phrase" : "Removed");
+    beep();
+  }
+
+  function addPhrase(){
+    const p = (phraseInput.value || "").trim();
+    if (!p) return;
+    const arr = loadSaved();
+    if (!arr.includes(p)) arr.unshift(p);
+    saveSaved(arr.slice(0, 30));
+    phraseInput.value = "";
+    renderSaved();
+    status("Saved phrase added");
+  }
+
+  function saveCurrent(){
+    const p = (text || "").trim();
+    if (!p) return;
+    const arr = loadSaved();
+    if (!arr.includes(p)) arr.unshift(p);
+    saveSaved(arr.slice(0, 30));
+    renderSaved();
+    status("Saved current message");
+  }
+
+  function exportData(){
+    const data = {
+      text,
+      saved: loadSaved(),
+      rate: rateEl.value,
+      pitch: pitchEl.value
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "talkboard90-export.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    status("Exported");
+    beep();
+  }
+
+  function resetAll(){
+    if (!confirm("Reset message + saved phrases?")) return;
+    localStorage.removeItem("talkboard90_text");
+    localStorage.removeItem("talkboard90_saved");
+    setText("");
+    renderSaved();
+    status("Reset complete");
+    beep();
+  }
+
+  // ---------- Keyboard ----------
+  function renderKeys(){
+    keysEl.innerHTML = "";
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    const nums = "1234567890".split("");
+    const punct = ["'", ",", ".", "?", "!", ":", ";", "-", "(", ")"];
+    const all = [...letters, ...nums, ...punct];
+
+    all.forEach(k => keysEl.appendChild(makeBtn(k, () => insert(k), "key")));
+
+    keysEl.appendChild(makeBtn("⌫", backspace, "key"));
+    keysEl.appendChild(makeBtn("␣", () => insert(" "), "key"));
+    keysEl.appendChild(makeBtn("ENTER", () => insert("\n"), "key wide"));
+    keysEl.appendChild(makeBtn("CLEAR", clearAll, "key danger wide"));
+  }
+
+  // ---------- Speech (Web Speech API) ----------
+  let voices = [];
+  function loadVoices(){
+    voices = ("speechSynthesis" in window) ? speechSynthesis.getVoices() : [];
+    voiceSel.innerHTML = "";
+
+    if (!voices || voices.length === 0){
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "Default voice";
+      voiceSel.appendChild(opt);
+      return;
+    }
+
+    voices.forEach((v, i) => {
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = `${v.name} (${v.lang})`;
+      voiceSel.appendChild(opt);
+    });
+
+    const en = voices.findIndex(v => (v.lang || "").toLowerCase().startsWith("en"));
+    if (en >= 0) voiceSel.value = String(en);
+  }
+
+  function speakNow(){
+    if (!("speechSynthesis" in window)){
+      status("Speech not supported (use Safari).");
+      alert("Speech not supported in this browser. Use Safari on iPad.");
+      return;
+    }
+
+    const msg = (text || "").trim();
+    if (!msg){ status("Nothing to speak"); return; }
+
+    speechSynthesis.cancel();
+
+    const u = new SpeechSynthesisUtterance(msg);
+    u.rate = Number(rateEl.value);
+    u.pitch = Number(pitchEl.value);
+
+    const idx = parseInt(voiceSel.value, 10);
+    if (!isNaN(idx) && voices[idx]) u.voice = voices[idx];
+
+    u.onstart = () => status("Speaking…");
+    u.onend = () => status("Ready");
+    u.onerror = () => status("Speech error");
+
+    speechSynthesis.speak(u);
+  }
+
+  function pauseResume(){
+    if (!("speechSynthesis" in window)) return;
+
+    if (speechSynthesis.speaking && !speechSynthesis.paused){
+      speechSynthesis.pause();
+      pauseBtn.textContent = "Resume";
+      status("Paused");
+    } else if (speechSynthesis.paused){
+      speechSynthesis.resume();
+      pauseBtn.textContent = "Pause";
+      status("Speaking…");
+    }
+  }
+
+  function stop(){
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    pauseBtn.textContent = "Pause";
+    status("Stopped");
+  }
+
+  // ---------- Wire up buttons ----------
+  speakBtn.addEventListener("click", () => { beep(); speakNow(); });
+  pauseBtn.addEventListener("click", () => { beep(); pauseResume(); });
+  stopBtn.addEventListener("click", () => { beep(); stop(); });
+
+  spaceBtn.addEventListener("click", () => { beep(); space(); });
+  backBtn.addEventListener("click", () => { beep(); backspace(); });
+  clearBtn.addEventListener("click", () => { beep(); clearAll(); });
+
+  addPhraseBtn.addEventListener("click", () => { beep(); addPhrase(); });
+  saveCurrentBtn.addEventListener("click", () => { beep(); saveCurrent(); });
+
+  phraseInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { beep(); addPhrase(); } });
+
+  exportBtn.addEventListener("click", exportData);
+  resetBtn.addEventListener("click", resetAll);
+
+  // ---------- Init ----------
+  setText(localStorage.getItem("talkboard90_text") || "");
+  renderQuick();
+  renderKeys();
+  renderSaved();
+
+  loadVoices();
+  if ("speechSynthesis" in window){
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  status("Ready");
+})();
+</script>
 </body>
 </html>
+```
